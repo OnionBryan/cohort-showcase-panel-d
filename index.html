@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cohort Showcase Panel D</title>
+<style>
+:root{
+  --ink:#0E2841; --ink2:#41536B; --blue:#1F5FA8; --sky:#DCE8F6; --amber:#D98E04; --amberT:#FBEFD6;
+  --red:#B83227; --grey:#6B7785; --line:#D5DCE5; --tint:#F2F5F9; --white:#FFFFFF; --green:#199E70; --gold:#FBD27A;
+  --head:"Avenir Next","Helvetica Neue",Arial,sans-serif;
+  --shadow:0 1px 2px rgba(14,40,65,.06),0 14px 30px -16px rgba(14,40,65,.28);
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#07101d}
+body{font-family:var(--head);color:var(--ink);-webkit-font-smoothing:antialiased}
+.slide{width:1280px;height:720px;position:relative;overflow:hidden;padding:52px 72px 0;font-size:30px;line-height:1.3;
+  background:radial-gradient(1100px 560px at 100% 0%,#EAF2FB 0%,rgba(234,242,251,0) 62%),
+             radial-gradient(700px 420px at 0% 100%,#FDF6E7 0%,rgba(253,246,231,0) 60%),
+             linear-gradient(180deg,#FFFFFF 0%,#FAFCFE 100%)}
+.slide.dark{color:#fff;
+  background:radial-gradient(900px 540px at 90% -12%,rgba(78,143,214,.42),rgba(78,143,214,0) 62%),
+             radial-gradient(760px 500px at -6% 112%,rgba(217,142,4,.24),rgba(217,142,4,0) 60%),
+             linear-gradient(160deg,#0A1D33 0%,#0E2841 52%,#13324F 100%)}
+/* top accent rule and a progress line along the bottom (slide k of 10) */
+.slide::before{content:"";position:absolute;left:0;top:0;width:100%;height:6px;background:linear-gradient(90deg,var(--blue) 0%,#4E8FD6 48%,var(--amber) 100%)}
+.slide.dark::before{background:linear-gradient(90deg,#9DC0EA 0%,#6FA6E0 48%,var(--gold) 100%)}
+.slide::after{content:"";position:absolute;left:0;bottom:0;height:5px;width:calc(var(--p,0)*10%);border-radius:0 5px 0 0;
+  background:linear-gradient(90deg,var(--blue),var(--amber))}
+.slide.dark::after{background:linear-gradient(90deg,#9DC0EA,var(--gold))}
+.slide:nth-of-type(1){--p:1}.slide:nth-of-type(2){--p:2}.slide:nth-of-type(3){--p:3}.slide:nth-of-type(4){--p:4}.slide:nth-of-type(5){--p:5}
+.slide:nth-of-type(6){--p:6}.slide:nth-of-type(7){--p:7}.slide:nth-of-type(8){--p:8}.slide:nth-of-type(9){--p:9}.slide:nth-of-type(10){--p:10}
+/* decorative rings on the dark slides */
+.rings{position:absolute;right:-150px;top:-170px;width:640px;height:640px;pointer-events:none}
+.eyebrow{font-size:28px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);display:flex;align-items:center;gap:16px}
+.eyebrow::before{content:"";width:38px;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--amber),#F0B740)}
+.dark .eyebrow{color:#9DC0EA}
+h1{font-size:64px;line-height:1.05;margin:18px 0 18px;font-weight:700;letter-spacing:-.02em}
+h2{font-size:46px;line-height:1.12;margin:10px 0 30px;font-weight:700;letter-spacing:-.015em}
+.sub{font-size:32px;color:#C9D6E6;max-width:760px}
+.num{position:absolute;right:40px;bottom:22px;font-size:28px;color:var(--grey);font-weight:600;font-variant-numeric:tabular-nums}
+.dark .num{color:#6F87A6}
+.big{font-size:84px;font-weight:700;line-height:1;letter-spacing:-.03em}
+.mid{font-size:56px;font-weight:700;line-height:1;letter-spacing:-.02em}
+.cap{font-size:28px;color:var(--ink2);line-height:1.25}
+.card{background:linear-gradient(180deg,#FFFFFF 0%,#F3F6FA 100%);border:1px solid #E1E8F0;border-radius:20px;padding:30px 30px;box-shadow:var(--shadow)}
+.row{display:flex;gap:32px}
+.amber{color:var(--amber)} .blue{color:var(--blue)} .red{color:var(--red)} .grey{color:var(--grey)}
+.pill{display:inline-block;background:var(--amberT);color:#7A4F00;border-radius:999px;padding:14px 30px;font-size:32px;font-weight:600;margin:0 14px 22px 0}
+/* icon tile, numbered badge, statistic with accent rule, result chip, glass panel */
+.ico{display:inline-flex;align-items:center;justify-content:center;width:116px;height:116px;border-radius:28px;
+  background:linear-gradient(145deg,#FFFFFF 0%,#E9F0F8 100%);border:1px solid #DCE6F2;box-shadow:0 10px 22px -14px rgba(14,40,65,.45),inset 0 1px 0 #fff}
+.badge{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;line-height:1;color:#fff;
+  background:linear-gradient(145deg,#3A82D3 0%,#184C8A 100%);box-shadow:0 6px 14px rgba(31,95,168,.32)}
+.stat{border-left:5px solid var(--c,var(--blue));padding-left:22px}
+.stat.top{border-left:0;padding-left:0;border-top:5px solid var(--c,var(--blue));padding-top:18px}
+.count{font-variant-numeric:tabular-nums}
+.chip{background:linear-gradient(180deg,#FFFFFF,#F1F5FA);border:1px solid #DCE5EF;border-radius:16px;padding:16px 18px;text-align:center;
+  box-shadow:var(--shadow);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip .to{color:#8A97A6;font-weight:500;padding:0 4px}
+.glass{background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:22px 30px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.rule{height:1px;background:linear-gradient(90deg,rgba(255,255,255,.28),rgba(255,255,255,0))}
+svg text{font-family:var(--head)}
+.hot{cursor:help}
+.notes{display:none}
+.live{display:none}
+/* entry animations: each .a rises in after the slide appears, in order of --d */
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes draw{0%{stroke-dashoffset:1;opacity:0}12%{opacity:1}100%{stroke-dashoffset:0;opacity:1}}
+@keyframes pop{0%{opacity:0;transform:scale(.2)}70%{opacity:1;transform:scale(1.25)}100%{opacity:1;transform:scale(1)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%{transform:scale(1);opacity:.55}100%{transform:scale(3.2);opacity:0}}
+@keyframes slidein{from{opacity:0}to{opacity:1}}
+@keyframes drift{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@media screen{
+  body{height:100vh;overflow:hidden;background:radial-gradient(1200px 800px at 50% 40%,#12233a 0%,#07101d 70%)}
+  .slide{position:absolute;left:50%;top:50%;transform-origin:center center;display:none;box-shadow:0 40px 90px rgba(0,0,0,.55)}
+  .slide.on{display:block;animation:slidein .45s ease both}
+  .slide.on::after{transform-origin:left;animation:growx .9s var(--ease) both}
+  .slide.on .a{animation:rise .6s var(--ease) both;animation-delay:calc(var(--d,0)*1s)}
+  .slide.on .bar{transform-box:fill-box;transform-origin:bottom;animation:grow .8s var(--ease) both;animation-delay:calc(var(--d,0)*1s)}
+  .slide.on .barx{transform-box:fill-box;transform-origin:left;animation:growx .8s var(--ease) both;animation-delay:calc(var(--d,0)*1s)}
+  /* lines draw themselves (pathLength=1), points pop, a marker travels the loop */
+  .slide.on .draw{stroke-dasharray:1;animation:draw .8s var(--ease) both;animation-delay:calc(var(--d,0)*1s)}
+  .slide.on .draw.slow{animation-duration:1.6s}
+  .slide.on .pop{transform-box:fill-box;transform-origin:center;animation:pop .5s var(--ease) both;animation-delay:calc(var(--d,0)*1s)}
+  .slide.on .live{display:inline;animation:fadein .8s ease both;animation-delay:calc(var(--d,2)*1s)}
+  .slide.on .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 2.2s ease-out infinite;animation-delay:calc(var(--d,2)*1s);opacity:0}
+  .slide.on .rings g{transform-box:fill-box;transform-origin:center;animation:drift 90s linear infinite}
+  body.shownotes .notes.on{display:block;position:fixed;left:0;right:0;bottom:0;max-height:36vh;overflow:auto;background:rgba(255,251,233,.96);color:#222;
+    font:17px/1.5 var(--head);padding:14px 26px;z-index:9;border-top:3px solid var(--amber);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  #tip{position:fixed;z-index:20;pointer-events:none;max-width:460px;background:rgba(12,32,54,.86);color:#fff;border-radius:14px;padding:14px 18px;
+    font:20px/1.4 var(--head);border:1px solid rgba(255,255,255,.16);box-shadow:0 18px 40px rgba(0,0,0,.4);
+    backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);opacity:0;visibility:hidden;transition:opacity .16s ease}
+  #tip.on{opacity:1;visibility:visible}
+  #tip b{color:#FBD27A}
+  .hot{transition:translate .25s var(--ease),filter .25s ease,box-shadow .25s ease}
+  .hot:hover{filter:brightness(1.06)}
+  .card.hot:hover,.chip.hot:hover,.glass.hot:hover{translate:0 -6px}
+  .card.hot:hover{box-shadow:0 2px 4px rgba(14,40,65,.08),0 26px 44px -18px rgba(14,40,65,.38)}
+  svg .hot:hover{filter:brightness(1.04) saturate(1.15)}
+}
+@media (prefers-reduced-motion:reduce){ .slide.on, .slide.on *{animation-duration:.01s !important;animation-delay:0s !important} }
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{background:#fff}
+  .slide{page-break-after:always;break-after:page;transform:none !important;position:relative !important;left:auto !important;top:auto !important;display:block !important}
+  #tip{display:none}
+}
+</style>
+</head>
+<body>
+<!-- 1 · GROUP WORK (1/2): the group paper -->
+<section class="slide dark">
+  <svg class="rings" viewBox="0 0 640 640" aria-hidden="true"><g fill="none" stroke="#9DC0EA"><circle cx="320" cy="320" r="120" stroke-opacity=".20" stroke-width="1.5"/><circle cx="320" cy="320" r="190" stroke-opacity=".15" stroke-width="1.5" stroke-dasharray="3 12"/><circle cx="320" cy="320" r="260" stroke-opacity=".11" stroke-width="1.5"/><circle cx="320" cy="320" r="316" stroke-opacity=".08" stroke-width="1.5" stroke-dasharray="2 16"/><circle cx="510" cy="320" r="6" fill="#FBD27A" stroke="none" fill-opacity=".8"/><circle cx="136" cy="136" r="4" fill="#9DC0EA" stroke="none" fill-opacity=".7"/></g></svg>
+  <div class="eyebrow a" style="--d:.1">Group work · Cohort 2028, Panel D</div>
+  <h1 class="a" style="--d:.25">Accounting for<br>GPU-Collateralized Debt</h1>
+  <div class="a" style="--d:.45;font-size:32px;color:#C9D6E6">Gibson · Hall · Demerjian · submitted to <span style="color:#FBD27A">Accounting Horizons</span></div>
+  <div class="a rule" style="--d:.6;margin-top:64px"></div>
+  <div class="row" style="margin-top:45px">
+    <div class="a hot stat" style="--d:.7;--c:#FBD27A;flex:1" data-tip="<b>Depreciation.</b> Filed GPU lives of five to six years against rental evidence of two to three. On CoreWeave's $20.9B of technology equipment a 2-year life is $10.5B a year, a 6-year life $3.5B: the $7.0B difference is more than twice adjusted EBITDA ($3.1B). Five of six publicized estimate changes lengthened lives, consistent with reporting incentives (not identification of earnings management).">
+      <div class="big count" style="font-size:104px;color:#FBD27A">$7.0B</div><div style="font-size:30px;color:#C9D6E6;margin-top:10px">depreciation swing</div></div>
+    <div class="a hot stat" style="--d:.85;--c:#9DC0EA;flex:1" data-tip="<b>Revenue.</b> AMD's 320 million penny warrants to Meta and OpenAI vest on chip purchases. At the March 2026 price (~$193), full vesting implies up to about $10.3B a year of revenue reduction under ASC 606-10-32-25 and ASC 718 (ASU 2025-04): 32% of recognized revenue on those contracts. An upper bound.">
+      <div class="big count" style="font-size:104px;color:#9DC0EA">$10.3B</div><div style="font-size:30px;color:#C9D6E6;margin-top:10px">warrant revenue effect</div></div>
+    <div class="a hot stat" style="--d:1.0;--c:#F08C80;flex:1" data-tip="<b>Leases.</b> $38.5B of executed but uncommenced data-center leases (ASC 842): present value about $21.9B at 10% over 12 years, roughly CoreWeave's reported debt ($21.6B). Fixed obligations rise from $30.1B recognized to about $52.0B, against $5.1B of revenue. Remedy proposed: disclosure.">
+      <div class="big count" style="font-size:104px;color:#F08C80">$22B</div><div style="font-size:30px;color:#C9D6E6;margin-top:10px">unrecognized leases</div></div>
+  </div>
+  <div class="num">1</div>
+  <aside class="notes">
+    <b>About 1½ minutes.</b> Template: insights from your group work (2 slides). Our group paper: Gibson, Hall and Demerjian, “Accounting for GPU-Collateralized Debt: Depreciation, Revenue Recognition, and Off-Balance-Sheet Measurement,” submitted to <i>Accounting Horizons</i>. Brandon Hall is on this panel; Peter Demerjian is a co-author and our Panel D advisor.<br>
+    What it found, using CoreWeave's FY2025 10-K and AMD's warrant filings, in GPU-collateralized lending (over $35B since 2023):<br>
+    • <b>Depreciation:</b> filed lives of 5–6 years vs rental evidence of 2–3; the $7.0B annual swing on $20.9B of equipment exceeds twice adjusted EBITDA ($3.1B).<br>
+    • <b>Revenue:</b> AMD warrants to Meta and OpenAI, up to ~$10.3B a year of revenue reduction (upper bound, 32% of revenue on those contracts).<br>
+    • <b>Leases:</b> $38.5B uncommenced leases, PV ≈ $22B ≈ total reported debt; fixed obligations $30.1B → ~$52.0B.<br>
+    Remedy: disclosure, not new recognition rules. <i>[Your words: how the three of us came together on this topic.]</i>
+  </aside>
+</section>
+
+<!-- 2 · GROUP WORK (2/2): insights from the group paper -->
+<section class="slide">
+  <div class="eyebrow a" style="--d:.05">Group work</div>
+  <h2 class="a" style="--d:.15">What our group work taught us</h2>
+  <div class="row" style="margin-top:44px">
+    <div class="card a hot" style="--d:.35;flex:1;min-height:400px;padding:40px 34px" data-tip="<b>Where the evidence sat.</b> Note 5 (property and equipment: $20.9B of technology equipment), Note 8 (leases: $38.5B executed but not yet commenced) and Note 10 (debt: twelve instruments, $21.6B). The headline numbers of the paper come from these three footnotes.">
+      <span class="ico"><svg width="84" height="84" viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="6" width="36" height="46" rx="5" fill="none" stroke="#1F5FA8" stroke-width="5"/><circle cx="42" cy="40" r="11" fill="#fff" stroke="#D98E04" stroke-width="5"/><line x1="50" y1="48" x2="60" y2="58" stroke="#D98E04" stroke-width="6" stroke-linecap="round"/></svg></span>
+      <div style="font-size:38px;font-weight:700;line-height:1.15;margin:26px 0 16px">Read the footnotes</div>
+      <div class="cap">10-K Notes 5, 8, 10</div>
+    </div>
+    <div class="card a hot" style="--d:.55;flex:1;min-height:400px;padding:40px 34px" data-tip="<b>Claim discipline.</b> Five of six publicized useful-life changes lengthened lives. With six observations selected on publicity, the paper says the pattern is <i>consistent with</i> reporting incentives and does not claim identification of earnings management.">
+      <span class="ico"><svg width="84" height="84" viewBox="0 0 64 64" aria-hidden="true"><line x1="32" y1="8" x2="32" y2="56" stroke="#1F5FA8" stroke-width="5" stroke-linecap="round"/><line x1="10" y1="18" x2="54" y2="18" stroke="#1F5FA8" stroke-width="5" stroke-linecap="round"/><path d="M4 40 L12 20 L20 40 Z" fill="#D98E04"/><path d="M44 40 L52 20 L60 40 Z" fill="#D98E04"/></svg></span>
+      <div style="font-size:38px;font-weight:700;line-height:1.15;margin:26px 0 16px">Claim only what data show</div>
+      <div class="cap">“Consistent with,” not proof</div>
+    </div>
+    <div class="card a hot" style="--d:.75;flex:1;min-height:400px;padding:40px 34px" data-tip="<b>Audience.</b> The paper closes with implications for three readers: standard-setters (disclosure), auditors (risk-assessment questions under ASC 360, ASC 250, AU-C 570) and lenders (rental-rate indices as collateral evidence).">
+      <span class="ico"><svg width="84" height="84" viewBox="0 0 64 64" aria-hidden="true"><circle cx="18" cy="22" r="8" fill="#1F5FA8"/><circle cx="46" cy="22" r="8" fill="#1F5FA8"/><circle cx="32" cy="16" r="9" fill="#D98E04"/><path d="M6 54 Q18 34 30 54 M34 54 Q46 34 58 54" fill="none" stroke="#1F5FA8" stroke-width="5"/></svg></span>
+      <div style="font-size:38px;font-weight:700;line-height:1.15;margin:26px 0 16px">Write for practice</div>
+      <div class="cap">Standard-setters, auditors, lenders</div>
+    </div>
+  </div>
+  <div class="num">2</div>
+  <aside class="notes">
+    <b>About 2½ minutes.</b> Template asks: what insights have you gained from your group work? Be specific and share examples.<br>
+    1. <b>Read the footnotes.</b> The story was in CoreWeave's FY2025 10-K notes: Note 5 ($20.9B technology equipment), Note 8 ($38.5B uncommenced leases), Note 10 (12 debt instruments, $21.6B). <i>[Your example: the moment a footnote changed the argument.]</i><br>
+    2. <b>Claim only what the data show.</b> Six publicized useful-life changes, five lengthened. We say “consistent with reporting incentives” and explicitly do not claim to identify earnings management; learning (Bayesian updating) fits too. <i>[Your example: a sentence the team rewrote to match the evidence.]</i><br>
+    3. <b>Write for practice.</b> The paper opens with a “Synopsis and Insights for Practice,” written for standard-setters, auditors, preparers and credit analysts. <i>[Your example: how practitioner experience shaped the questions.]</i>
+  </aside>
+</section>
+
+<!-- 3 · DISSERTATION QUESTION (1/3): Chen's catch-22 -->
+<section class="slide">
+  <div class="eyebrow a" style="--d:.05">Dissertation question</div>
+  <h2 class="a" style="--d:.15">Chen et al. (2010): a regional catch-22</h2>
+  <svg width="1136" height="420" viewBox="0 0 1136 420" role="img" aria-label="The regional catch-22 loop">
+    <defs><marker id="ah" viewBox="0 0 12 12" refX="9.5" refY="6" markerUnits="userSpaceOnUse" markerWidth="22" markerHeight="22" orient="auto"><path d="M1,1.5L11,6L1,10.5L3.6,6z" fill="#41536B"/></marker>
+      <marker id="ah2" viewBox="0 0 12 12" refX="9.5" refY="6" markerUnits="userSpaceOnUse" markerWidth="22" markerHeight="22" orient="auto"><path d="M1,1.5L11,6L1,10.5L3.6,6z" fill="#D98E04"/></marker>
+      <linearGradient id="gS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9EEF4"/></linearGradient>
+      <linearGradient id="gO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EDF4FC"/><stop offset="1" stop-color="#CFE0F4"/></linearGradient>
+      <linearGradient id="gN" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EBF8F1"/><stop offset="1" stop-color="#CDEBDD"/></linearGradient>
+      <linearGradient id="gA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF8E8"/><stop offset="1" stop-color="#FAE8C2"/></linearGradient>
+      <linearGradient id="gArrow" gradientUnits="userSpaceOnUse" x1="0" y1="60" x2="0" y2="340"><stop offset="0" stop-color="#5A6E87"/><stop offset="1" stop-color="#2F4159"/></linearGradient></defs>
+    <path class="draw" style="--d:.5" pathLength="1" d="M735 70 Q880 110 900 280" fill="none" stroke="url(#gArrow)" stroke-width="5" stroke-linecap="round" marker-end="url(#ah)"/>
+    <path class="draw" style="--d:.75" pathLength="1" d="M755 330 L712 330" fill="none" stroke="#41536B" stroke-width="5" stroke-linecap="round" marker-end="url(#ah)"/>
+    <path class="draw" style="--d:1.0" pathLength="1" d="M470 285 Q436 190 486 100" fill="none" stroke="url(#gArrow)" stroke-width="5" stroke-linecap="round" marker-end="url(#ah)"/>
+    <!-- a marker travels the loop: success, offices, new companies, success -->
+    <g class="live" style="--d:1.9"><circle r="16" fill="#D98E04" fill-opacity=".18"/><circle r="7.5" fill="#D98E04" stroke="#fff" stroke-width="2.5"/>
+      <animateMotion dur="7.5s" repeatCount="indefinite" calcMode="linear" path="M580 50 L735 70 Q880 110 900 280 L910 330 L550 330 L470 285 Q436 190 486 98 L580 50"/></g>
+    <g class="a hot" style="--d:.35" data-tip="<b>Success → offices.</b> Chen et al.: metropolitan areas with higher five-year venture success rates host more venture capital offices (their Table 4).">
+      <rect x="430" y="17" width="300" height="80" rx="18" fill="#0E2841" fill-opacity=".10"/><rect x="430" y="10" width="300" height="80" rx="18" fill="url(#gS)" stroke="#41536B" stroke-width="3"/><text x="580" y="61" text-anchor="middle" font-size="32" font-weight="700" fill="#0E2841">Regional success</text></g>
+    <g class="a hot" style="--d:.6" data-tip="<b>Offices → new companies.</b> Areas with more venture offices record more newly financed startups (their Table 6).">
+      <rect x="760" y="297" width="300" height="80" rx="18" fill="#1F5FA8" fill-opacity=".14"/><rect x="760" y="290" width="300" height="80" rx="18" fill="url(#gO)" stroke="#1F5FA8" stroke-width="3"/><text x="910" y="341" text-anchor="middle" font-size="32" font-weight="700" fill="#0E2841">Venture offices</text></g>
+    <g class="a hot" style="--d:.85" data-tip="<b>New companies → success.</b> Financed companies list or are acquired, becoming the region's next record of success.">
+      <rect x="400" y="297" width="300" height="80" rx="18" fill="#199E70" fill-opacity=".14"/><rect x="400" y="290" width="300" height="80" rx="18" fill="url(#gN)" stroke="#199E70" stroke-width="3"/><text x="550" y="341" text-anchor="middle" font-size="32" font-weight="700" fill="#0E2841">New companies</text></g>
+    <g class="a hot" style="--d:1.3" data-tip="<b>Chen et al.'s proposed way in:</b> center-based investors earned higher IPO rates, most of all on investments outside their home regions, so peripheral regions might gain more from reducing frictions for remote investors than from cultivating local firms (Chen et al. 2009, p. 15; 2010, p. 101).">
+      <rect x="0" y="290" width="340" height="80" rx="18" fill="url(#gA)" stroke="#D98E04" stroke-width="3" stroke-dasharray="10 7"/><text x="170" y="341" text-anchor="middle" font-size="30" font-weight="700" fill="#7A4F00">Nonlocal investors?</text></g>
+    <path class="a" style="--d:1.45" d="M345 330 L390 330" fill="none" stroke="#D98E04" stroke-width="5" stroke-dasharray="10 7" marker-end="url(#ah2)"/>
+  </svg>
+  <div class="a hot" style="--d:1.6;font-size:32px;font-weight:600;margin-top:-6px" data-tip="<b>Paper Table 2 (Chen Tables 1–3):</b> across 316 areas, San Francisco–San Jose, New York and Boston hold 55.0% of venture offices in 2005 and 52.6% in 2024, and 60.8% of Form ADV venture partners in 2024.">SF, NY and Boston still hold <span class="blue">52.6%</span> of offices</div>
+  <div class="num">3</div>
+  <aside class="notes">
+    <b>About 2 minutes.</b> Template: what is the dissertation research question; explain it and why it is important (3 slides).<br>
+    Dissertation paper: “The Geography of Venture Capital Revisited: Chen's Regional Catch-22 and the U.S. Evidence, 2005–2025.”<br>
+    Chen, Gompers, Kovner and Lerner (2010, <i>Journal of Urban Economics</i>) documented the concentration of U.S. venture capital in San Francisco, Boston and New York over 1975–2005. Two relationships underpin their account: areas with higher prior venture success host more offices, and areas with more offices record more newly financed startups. Together: the catch-22. A region needs a record of success to attract investors but lacks the local investors to build that record.<br>
+    Their proposed way in: center-based investors had higher IPO rates, especially on deals outside their home regions, so peripheral regions might benefit more from reducing frictions for remote investors than from cultivating local firms (Chen et al. 2009, p. 15; 2010, p. 101).<br>
+    Why it matters: concentration persists. The three centers hold 52.6% of observed offices in 2024 (55.0% in 2005). <i>[Your words: why this question matters to you, for example Atlanta.]</i>
+  </aside>
+</section>
+
+<!-- 4 · DISSERTATION QUESTION (2/3): why revisit now -->
+<section class="slide">
+  <div class="eyebrow a" style="--d:.05">Dissertation question</div>
+  <h2 class="a" style="--d:.15">Why revisit now: exits moved to acquisitions</h2>
+  <div class="row" style="align-items:flex-end">
+    <svg width="700" height="440" viewBox="0 0 700 440" role="img" aria-label="Listed and acquired shares by cohort">
+      <defs><linearGradient id="bBlue" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2C6FBC"/><stop offset="1" stop-color="#184F90"/></linearGradient>
+        <linearGradient id="bGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#35C493"/><stop offset="1" stop-color="#16916A"/></linearGradient></defs>
+      <!-- percent of cohort companies; 5 px per point; faint rules at 20, 40 and 60 percent -->
+      <g stroke="#E3E9F0" stroke-width="2" stroke-dasharray="3 9" stroke-linecap="round"><line x1="20" y1="270" x2="690" y2="270"/><line x1="20" y1="170" x2="690" y2="170"/><line x1="20" y1="70" x2="690" y2="70"/></g>
+      <line x1="20" y1="370" x2="690" y2="370" stroke="#B8C3D0" stroke-width="2" stroke-linecap="round"/>
+      <g class="bar hot" style="--d:.4" data-tip="<b>First financed 2005–2009:</b> 7,221 companies; 7.3% listed, 51.7% acquired without listing; listings 12.3% of exits."><rect x="40" y="333.5" width="120" height="36.5" fill="url(#bBlue)"/><path d="M40 333.5V85Q40 75 50 75H150Q160 75 160 85V333.5Z" fill="url(#bGreen)"/><rect x="40" y="332.5" width="120" height="2" fill="#fff" fill-opacity=".85"/></g>
+      <g class="bar hot" style="--d:.55" data-tip="<b>First financed 2010–2014:</b> 10,462 companies; 3.5% listed, 34.5% acquired; listings 9.2% of exits."><rect x="210" y="352.5" width="120" height="17.5" fill="url(#bBlue)"/><path d="M210 352.5V190Q210 180 220 180H320Q330 180 330 190V352.5Z" fill="url(#bGreen)"/><rect x="210" y="351.5" width="120" height="2" fill="#fff" fill-opacity=".85"/></g>
+      <g class="bar hot" style="--d:.7" data-tip="<b>First financed 2015–2019:</b> 10,215 companies; 2.7% listed, 22.0% acquired; listings 11.0% of exits."><rect x="380" y="356.5" width="120" height="13.5" fill="url(#bBlue)"/><path d="M380 356.5V256.5Q380 246.5 390 246.5H490Q500 246.5 500 256.5V356.5Z" fill="url(#bGreen)"/><rect x="380" y="355.5" width="120" height="2" fill="#fff" fill-opacity=".85"/></g>
+      <g class="bar hot" style="--d:.85" data-tip="<b>First financed 2020–2025:</b> 15,569 companies; 0.7% listed, 6.4% acquired; listings 10.4% of exits."><rect x="550" y="366.5" width="120" height="3.5" fill="url(#bBlue)"/><path d="M550 366.5V344.5Q550 334.5 560 334.5H660Q670 334.5 670 344.5V366.5Z" fill="url(#bGreen)"/><rect x="550" y="365.5" width="120" height="2" fill="#fff" fill-opacity=".85"/></g>
+      <g font-size="28" fill="#41536B" text-anchor="middle"><text x="100" y="410">2005–09</text><text x="270" y="410">2010–14</text><text x="440" y="410">2015–19</text><text x="610" y="410">2020–25</text></g>
+      <g font-size="28" font-weight="600"><rect x="40" y="10" width="22" height="22" rx="6" fill="url(#bBlue)"/><text x="72" y="31" fill="#0E2841">Listed</text><rect x="190" y="10" width="22" height="22" rx="6" fill="url(#bGreen)"/><text x="222" y="31" fill="#0E2841">Acquired</text></g>
+    </svg>
+    <div style="flex:1;padding-bottom:40px">
+      <div class="big blue a hot" style="--d:1.1" data-tip="<b>Paper Table 1.</b> Listings are 9–12% of exits in every post-2005 cohort: acquisitions account for roughly nine-tenths of realized exits, consistent with the national decline in IPOs (Gao et al. 2013; Doidge et al. 2017; Ewens and Farre-Mensa 2020).">9–12%</div>
+      <div class="cap a" style="--d:1.2;margin:10px 0 40px">of exits are listings</div>
+      <div class="a hot stat" style="--d:1.4;--c:var(--amber);font-size:30px;font-weight:600" data-tip="<b>Measurement change:</b> exempt reporting venture advisers enter SEC Form ADV from 2012, so office presence can be observed in filings. Chen's equations also combine differences between regions with changes within them, and use eventual success of earlier cohorts rather than exits realized at the time.">Form ADV adds venture advisers from 2012</div>
+    </div>
+  </div>
+  <div class="num">4</div>
+  <aside class="notes">
+    <b>About 2 minutes.</b> Why revisit 2005–2025:<br>
+    • <b>Exit routes changed.</b> Public listings declined relative to trade sales (Gao et al. 2013; Doidge et al. 2017); late-stage private capital let companies stay private longer (Ewens and Farre-Mensa 2020). In our sample, of companies first financed 2005–2009, 7.3% listed and 51.7% were acquired without listing; listings are 9–12% of exits in every cohort. Chen measured success by IPOs.<br>
+    • <b>Measurement changed.</b> Exempt reporting venture advisers enter Form ADV from 2012, so office presence can be dated in filings.<br>
+    • <b>Questions the original equations leave open.</b> Contemporaneous office and startup counts mix differences between regions with changes within them; success based on eventual outcomes of earlier cohorts differs from exits already realized when an office opens. We keep Chen's specifications for comparison and add dated exits and regional panels.
+  </aside>
+</section>
+
+<!-- 5 · DISSERTATION QUESTION (3/3): the three research questions -->
+<section class="slide">
+  <div class="eyebrow a" style="--d:.05">Dissertation question</div>
+  <h2 class="a" style="--d:.15">Three research questions</h2>
+  <div style="display:grid;grid-template-columns:90px 1fr;row-gap:38px;column-gap:24px;align-items:center;margin-top:40px">
+    <div class="badge a" style="--d:.35">1</div>
+    <div class="card a hot" style="--d:.45;padding:30px 32px;font-size:36px" data-tip="<b>RQ1. Regional success and investor presence.</b> How is regional venture success associated with local offices and branch openings? Re-estimates Chen's office-count regressions and firm–region branch models; separates the region's record from the investor's own; asks whether dated listings precede later office counts.">Is past success still associated with more offices?</div>
+    <div class="badge a" style="--d:.65">2</div>
+    <div class="card a hot" style="--d:.75;padding:30px 32px;font-size:36px" data-tip="<b>RQ2. Cross-sectional scale versus within-region recursion.</b> How much of the office–new-company association is change within a region rather than scale between regions, and how do offices, startups and exits covary over time? Pooled versus area fixed effects; a three-equation panel vector autoregression.">Offices and startups: between regions, or within?</div>
+    <div class="badge a" style="--d:.95">3</div>
+    <div class="card a hot" style="--d:1.05;padding:30px 32px;font-size:36px" data-tip="<b>RQ3. Investor location, exit mode and nonlocal capital.</b> Does center-based investors' extra advantage on outside deals persist across listings and acquisitions, and how does nonlocal center participation relate to later local offices and first financings?">Do nonlocal investors offer a way in?</div>
+  </div>
+  <div class="num">5</div>
+  <aside class="notes">
+    <b>About 2 minutes.</b><br>
+    <b>RQ1. Regional success and investor presence:</b> how is regional venture success associated with local offices and branch openings across U.S. metropolitan areas? Re-estimate Chen's area office-count regressions and firm–region branch-opening models; distinguish aggregate regional success from an investor's own regional record; ask whether dated listings precede later office counts.<br>
+    <b>RQ2. Cross-sectional scale versus within-region recursion:</b> to what extent does the office–new-company association reflect within-region change rather than between-region scale, and how do offices, startups and exits covary over time? Pooled vs area fixed effects; three-equation panel VAR.<br>
+    <b>RQ3. Investor location, exit mode and nonlocal capital:</b> does the extra advantage of center-based investors on outside deals persist across listing and acquisition outcomes, and how does nonlocal center participation relate to subsequent local activity? This tests the evidence behind Chen's proposed nonlocal-investor alternative.<br>
+    These are questions about observed relationships and their timing; the paper makes no causal claim.
+  </aside>
+</section>
+
+<!-- 6 · RESEARCH DESIGN (1/3): literature and theory -->
+<section class="slide">
+  <div class="eyebrow a" style="--d:.05">Research design</div>
+  <h2 class="a" style="--d:.15">Literature: three streams, one question</h2>
+  <div class="row" style="margin-top:30px">
+    <div class="card a hot" style="--d:.35;flex:1;min-height:330px;border-top:8px solid #1F5FA8;padding-top:26px" data-tip="<b>VC geography, distance and interregional flows.</b> Chen et al. (2010); syndicate networks extend reach (Sorenson and Stuart 2001; Hochberg et al. 2007, 2010); proximity shapes monitoring and outcomes (Bernstein et al. 2016); local capital supply shapes startups (Samila and Sorenson 2011; Chen and Ewens 2025).">
+      <div style="font-size:38px;font-weight:700;line-height:1.15">VC geography and distance</div><span class="ico" style="margin-top:26px"><svg width="78" height="78" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 58s18-18 18-32a18 18 0 0 0-36 0c0 14 18 32 18 32z" fill="none" stroke="#1F5FA8" stroke-width="5"/><circle cx="32" cy="26" r="7" fill="#1F5FA8"/></svg></span></div>
+    <div class="card a hot" style="--d:.55;flex:1;min-height:330px;border-top:8px solid #199E70;padding-top:26px" data-tip="<b>Organizational histories, exit modes and retained capacity.</b> Spawning of founders (Gompers et al. 2005); listings and acquisitions differ in local spillovers (Stuart and Sorenson 2003); the shift to acquisitions (Gao et al. 2013; Ewens and Farre-Mensa 2020); labor mobility in clusters (Fallick et al. 2006).">
+      <div style="font-size:38px;font-weight:700;line-height:1.15">Exit modes and regional capacity</div><span class="ico" style="margin-top:26px"><svg width="78" height="78" viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="8" width="30" height="48" rx="3" fill="none" stroke="#199E70" stroke-width="5"/><path d="M30 32h28M48 22l10 10-10 10" fill="none" stroke="#199E70" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+    <div class="card a hot" style="--d:.75;flex:1;min-height:330px;border-top:8px solid #D98E04;padding-top:26px" data-tip="<b>Entrepreneurial ecosystems and temporal precedence.</b> Regional systems where outputs feed back into resources (Stam 2015; Spigel 2017; Spigel and Harrison 2018); comparative work must separate scale between regions from precedence within them (Alvedalen and Boschma 2017; Granger 1969).">
+      <div style="font-size:38px;font-weight:700;line-height:1.15">Entrepreneurial ecosystems</div><span class="ico" style="margin-top:26px"><svg width="78" height="78" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="14" r="7" fill="#D98E04"/><circle cx="12" cy="48" r="7" fill="#D98E04"/><circle cx="52" cy="48" r="7" fill="#D98E04"/><path d="M28 20L15 42M36 20l13 22M19 48h26" stroke="#D98E04" stroke-width="4"/></svg></span></div>
+  </div>
+  <div class="a hot" style="--d:1.0;margin-top:56px;font-size:40px;font-weight:700" data-tip="<b>The lens.</b> Three comparisons make the catch-22 explicit: between-area differences in scale, within-area temporal precedence in the sense of Granger (1969), and deal-level outcome differences across investor locations. The paper's one descriptive label for the repeated association of offices, financing cohorts and exits is “recursive infrastructure.”">Lens: what precedes what, <span class="blue">within</span> regions</div>
+  <div class="num">6</div>
+  <aside class="notes">
+    <b>About 2 minutes.</b> Template: highlight literature and theory.<br>
+    <b>1. VC geography, distance and interregional capital flows:</b> Chen et al. (2010) set the benchmark regularities; coinvestment networks extend spatial reach (Sorenson and Stuart 2001; Hochberg et al. 2007, 2010); proximity matters after investment (Bernstein et al. 2016, airline routes); local capital supply shapes startup formation and relocation (Samila and Sorenson 2011; Chen and Ewens 2025).<br>
+    <b>2. Organizational histories, exit modes and retained capacity:</b> founders spawned by established firms (Gompers et al. 2005); IPOs and acquisitions differ in local spillovers (Stuart and Sorenson 2003); acquisitions outnumber listings about eight to one over 2005–2025.<br>
+    <b>3. Entrepreneurial ecosystems and temporal precedence:</b> outputs feed back into local resources (Stam 2015; Spigel 2017; Spigel and Harrison 2018); comparative work must separate scale between regions from precedence within them (Alvedalen and Boschma 2017).<br>
+    <b>Lens:</b> between-area scale, within-area precedence (Granger 1969), deal-level outcomes by investor location. One descriptive label: “recursive infrastructure.”
+  </aside>
+</section>
+
+<!-- 7 · RESEARCH DESIGN (2/3): method and data -->
+<section class="slide">
+  <div class="eyebrow a" style="--d:.05">Research design</div>
+  <h2 class="a" style="--d:.15">Method: Chen's tables, then the dynamics</h2>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:36px">
+    <div class="a hot stat top" style="--d:.35" data-tip="<b>130,054 first firm–company equity investments</b>, 2005–2025: Chen's unit of observation, a venture firm's first investment in a company. Chen et al. had 28,434 for 1975–2005."><div class="mid blue count">130,054</div><div class="cap">investments</div></div>
+    <div class="a hot stat top" style="--d:.5" data-tip="<b>43,467 companies</b> placed in a U.S. statistical area (2009 OMB delineation)."><div class="mid blue count">43,467</div><div class="cap">companies</div></div>
+    <div class="a hot stat top" style="--d:.65" data-tip="<b>4,480 U.S. venture capital firms</b>, affiliated fund vehicles consolidated to the parent; 165 reviewed parent-entity consolidations."><div class="mid blue count">4,480</div><div class="cap">venture firms</div></div>
+    <div class="a hot stat top" style="--d:.8" data-tip="<b>191 statistical areas</b> with an active venture office during 2005–2025: the dynamic panel, 3,820 estimation area-years."><div class="mid blue count">191</div><div class="cap">areas</div></div>
+  </div>
+  <div class="card a hot" style="--d:1.0;margin-top:52px;padding:32px 34px;font-size:32px" data-tip="<b>Linked sources.</b> PrivCo (October 2026 delivery), Crunchbase 2013 and 2015 exports, S&amp;P Capital IQ private placements, SEC Form D and Form ADV, Ritter's IPO series, Compustat/CRSP. Linked by CIK, EIN, web domain and reviewed name-region rules; 216,474 equity rounds before restrictions, 73,137 corroborated across providers.">
+    <b>Data:</b> PrivCo · Crunchbase · Capital IQ · Form D · Form ADV</div>
+  <div class="card a hot" style="--d:1.2;margin-top:28px;padding:32px 34px;font-size:32px" data-tip="<b>Estimation.</b> Chen's Tables 4, 6, 9 and 10 re-estimated with area fixed effects and clustered inference; a three-equation panel VAR of offices, new companies and listings (one lag by BIC, generalized impulse responses, half-panel jackknife); deal outcomes on 86,642 investments with identical five-year follow-up.">
+    <b>Methods:</b> area fixed effects · panel VAR · equal-horizon exits</div>
+  <div class="num">7</div>
+  <aside class="notes">
+    <b>About 2 minutes.</b> Template: highlight method and data.<br>
+    <b>Data:</b> a unified multi-source dataset: PrivCo's October 2026 venture delivery; Crunchbase 2013 and 2015 exports; S&amp;P Capital IQ private placements; SEC Form D and Form ADV; Ritter's venture-backed IPO series; Compustat/CRSP. Entities linked by CIK, EIN, normalized web domains and reviewed name-and-region rules. Sample: 130,054 first firm–company investments, 43,467 companies, 4,480 U.S. venture firms; 191 areas in the dynamic panel (3,820 area-years). Geography: 2009 OMB combined statistical areas.<br>
+    <b>Methods:</b> (1) Chen's tables re-estimated, adding statistical-area fixed effects; (2) a three-equation panel VAR (offices N, new companies K, listings E) with area and year effects to read temporal precedence; (3) deal-level probits and linear probability models, including a common five-year follow-up sample (86,642 investments) so exit timing is equal across groups.
+  </aside>
+</section>
+
+<!-- 8 · RESEARCH DESIGN (3/3): contribution -->
+<section class="slide">
+  <div class="eyebrow a" style="--d:.05">Research design</div>
+  <h2 class="a" style="--d:.15">Contribution: what holds, what changes</h2>
+  <div style="display:grid;grid-template-columns:70px 1fr 320px;row-gap:52px;column-gap:22px;align-items:center;margin-top:50px">
+    <div class="badge a" style="--d:.3">1</div>
+    <div class="a" style="--d:.35;font-size:36px;font-weight:600">Success goes with more offices across regions, not within</div>
+    <div class="a hot chip" style="--d:.45;font-size:34px" data-tip="<b>RQ1 (paper Table 3).</b> Five-year listing rate and ln(1 + offices): 7.018 across 173 areas (p = 0.03); −5.826 within the twelve hubs alone (p = 0.67); 0.138 with area fixed effects (p = 0.44). Branch openings: own minus regional record 0.138 [−0.283, 0.558] points."><span class="blue" style="font-weight:700">7.02</span><span class="to"> → </span><span style="font-weight:700">0.14</span></div>
+    <div class="badge a" style="--d:.6">2</div>
+    <div class="a" style="--d:.65;font-size:36px;font-weight:600">Offices precede startups; slope falls 75% within areas</div>
+    <div class="a hot chip" style="--d:.75;font-size:34px" data-tip="<b>RQ2 (paper Tables 5 and 6).</b> Office–new-company slope 0.836 pooled, 0.208 with area effects (−75%; Chen: 0.740 → 0.132, −82%). Panel VAR: lagged offices → new companies 0.172 (s.e. 0.032). The reverse slope is 0.019 with activity-based offices and 0.002 [−0.012, 0.016] with Form ADV filing years (2013–2025)."><span class="blue" style="font-weight:700">0.836</span><span class="to"> → </span><span style="font-weight:700">0.208</span></div>
+    <div class="badge a" style="--d:.9">3</div>
+    <div class="a" style="--d:.95;font-size:36px;font-weight:600">Distant-deal premium not reproduced</div>
+    <div class="a hot chip" style="--d:1.05;font-size:34px" data-tip="<b>RQ3 (paper Tables 8–10).</b> Center investors keep a 1.83-point listing advantage, but the extra premium on outside deals is 0.28 points [−0.77, 1.34], excluding Chen's 2.9–3.8. Five-year IPO: 1.19 (LPM) vs 0.11 (probit); all exits −1.56, imprecise. Local co-investor in the entry round: +2.18 points. Nonlocal center share does not predict next-year first financings."><span style="font-weight:700">0.28</span> vs <span class="amber" style="font-weight:700">2.9–3.8</span></div>
+  </div>
+  <div class="num">8</div>
+  <aside class="notes">
+    <b>About 2½ minutes.</b> Template: highlight the contribution.<br>
+    <b>RQ1:</b> Chen-style regional success remains positively associated with office counts across the urban hierarchy (7.018, p = 0.03, 173 areas), but not within the twelve hubs (−5.826) or with area fixed effects (0.138). Branch openings: own-firm vs regional pre-opening success is imprecise, 0.138 [−0.283, 0.558].<br>
+    <b>RQ2:</b> area fixed effects cut the office–financing slope from 0.836 to 0.208 (−75%, comparable to Chen's −82%); the within-area association stays positive nationally and outside the hubs. Lagged offices precede first financings (0.172). Reverse precedence depends on the office measure: 0.019 vs 0.002 on identical 2013–2025 observations.<br>
+    <b>RQ3:</b> center-based investors keep a 1.83-point listing advantage; their extra premium on outside deals is 0.28 [−0.77, 1.34], excluding Chen's 2.9–3.8. Five-year IPO interaction 1.19 (LPM) vs 0.11 (probit); all-exit negative and imprecise. Local entry-round co-investor +2.18 points.<br>
+    <b>Contribution:</b> separates three things a pooled cross-section conflates: geographic association, temporal relationship within regions, and the investor-location premium under different exit definitions. Every estimate is an association.
+  </aside>
+</section>
+
+<!-- 9 · NEW FRONTIERS (1/2): Atlanta -->
+<section class="slide">
+  <div class="eyebrow a" style="--d:.05">New frontiers</div>
+  <h2 class="a" style="--d:.15">New frontier: the Atlanta market</h2>
+  <div class="row" style="align-items:flex-end">
+    <div style="flex:1.1">
+      <div class="cap a" style="--d:.3;margin-bottom:6px">Active main offices, Atlanta</div>
+      <svg width="680" height="470" viewBox="0 0 640 390" role="img" aria-label="Atlanta active main offices rose from 19 in 2005 to 56 in 2025">
+        <defs><linearGradient id="aFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3C566" stop-opacity=".62"/><stop offset="1" stop-color="#FBEFD6" stop-opacity=".12"/></linearGradient>
+          <linearGradient id="aLine" gradientUnits="userSpaceOnUse" x1="40" y1="0" x2="600" y2="0"><stop offset="0" stop-color="#E8A62A"/><stop offset="1" stop-color="#C77E00"/></linearGradient></defs>
+        <g stroke="#E3E9F0" stroke-width="2" stroke-dasharray="3 9" stroke-linecap="round"><line x1="40" y1="247.1" x2="600" y2="247.1"/><line x1="40" y1="164.3" x2="600" y2="164.3"/><line x1="40" y1="81.4" x2="600" y2="81.4"/></g>
+        <line x1="40" y1="330" x2="600" y2="330" stroke="#B8C3D0" stroke-width="2" stroke-linecap="round"/>
+        <polygon class="a" style="--d:.9" points="40,330 40.0,251.3 68.0,247.1 96.0,234.7 124.0,234.7 152.0,222.3 180.0,218.1 208.0,201.6 236.0,189.1 264.0,180.9 292.0,156.0 320.0,147.7 348.0,147.7 376.0,143.6 404.0,139.4 432.0,131.1 460.0,102.1 488.0,77.3 516.0,73.1 544.0,77.3 572.0,89.7 600.0,98.0 600,330" fill="url(#aFill)"/>
+        <polyline class="draw slow hot" style="--d:.5" pathLength="1" points="40.0,251.3 68.0,247.1 96.0,234.7 124.0,234.7 152.0,222.3 180.0,218.1 208.0,201.6 236.0,189.1 264.0,180.9 292.0,156.0 320.0,147.7 348.0,147.7 376.0,143.6 404.0,139.4 432.0,131.1 460.0,102.1 488.0,77.3 516.0,73.1 544.0,77.3 572.0,89.7 600.0,98.0" fill="none" stroke="url(#aLine)" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" data-tip="<b>Atlanta active main offices</b> (a firm with a deal in the past five years): 19 in 2005, peak 62 in 2022, 56 in 2025. Companies first financed: 710 over 2005–2025; dated listings 20; all dated exits 218."/>
+        <circle class="live pulse" style="--d:2.2" cx="600" cy="98.0" r="9" fill="#D98E04"/>
+        <circle class="pop" style="--d:.5" cx="40" cy="251.3" r="9" fill="#D98E04" stroke="#fff" stroke-width="3"/><circle class="pop" style="--d:2.0" cx="600" cy="98.0" r="9" fill="#D98E04" stroke="#fff" stroke-width="3"/>
+        <text class="a" style="--d:.6" x="40" y="229.3" font-size="34" font-weight="700" fill="#7A4F00">19</text>
+        <text class="a" style="--d:2.0" x="600" y="76.0" text-anchor="end" font-size="34" font-weight="700" fill="#7A4F00">56</text>
+        <g font-size="28" fill="#41536B"><text x="40" y="372">2005</text><text x="600" y="372" text-anchor="end">2025</text></g>
+      </svg>
+    </div>
+    <div style="flex:.9;padding-bottom:30px">
+      <div class="mid a hot count" style="--d:.9" data-tip="<b>1,769 first firm–company investments</b> in Atlanta companies, 2005–2025 (Atlanta-Sandy Springs-Gainesville CSA).">1,769</div>
+      <div class="cap a" style="--d:1.0;margin:6px 0 30px">investments</div>
+      <div class="a hot" style="--d:1.2;font-size:32px;font-weight:600" data-tip="<b>Local share:</b> 21.8% of Atlanta's investments came from firms with their main office in Atlanta, against 40.7% across all areas; 12% in 2025. Most Atlanta financing is nonlocal.">22% local, against 41% nationally</div>
+      <div class="a hot stat" style="--d:1.45;margin-top:30px;font-size:32px;font-weight:700;color:#1F5FA8" data-tip="<b>Why syndicates:</b> a local co-investor in the entry round is associated with a 2.18-point higher listing probability, while nonlocal center share does not predict next-year local first financings. Who co-invests with local capital is the next question.">Next: syndicates with local co-investors</div>
+    </div>
+  </div>
+  <div class="num">9</div>
+  <aside class="notes">
+    <b>About 1½ minutes.</b> Template: how will this dissertation open new frontiers for you? Connect to your professional growth.<br>
+    Atlanta (the Atlanta–Sandy Springs–Gainesville CSA), from the same national data: 1,769 first firm–company investments 2005–2025; 21.8% from firms with their main office in Atlanta, against 40.7% nationally (12% in 2025); active main offices grew from 19 (2005) to a peak of 62 (2022), 56 in 2025; 710 companies first financed; 20 dated listings, 218 dated exits.<br>
+    Atlanta is a market where most capital is nonlocal, the setting Chen's catch-22 describes. The findings point to the next question: a local co-investor in the entry round goes with a 2.18-point higher listing probability, while nonlocal center share does not predict next-year local first financings. Who co-invests with local capital, and how syndicates form, is the frontier.<br>
+    <i>[Your words: what this means for you and for Atlanta.]</i>
+  </aside>
+</section>
+
+<!-- 10 · NEW FRONTIERS (2/2): professional growth and close -->
+<section class="slide dark">
+  <svg class="rings" viewBox="0 0 640 640" aria-hidden="true"><g fill="none" stroke="#9DC0EA"><circle cx="320" cy="320" r="120" stroke-opacity=".20" stroke-width="1.5"/><circle cx="320" cy="320" r="190" stroke-opacity=".15" stroke-width="1.5" stroke-dasharray="3 12"/><circle cx="320" cy="320" r="260" stroke-opacity=".11" stroke-width="1.5"/><circle cx="320" cy="320" r="316" stroke-opacity=".08" stroke-width="1.5" stroke-dasharray="2 16"/><circle cx="510" cy="320" r="6" fill="#FBD27A" stroke="none" fill-opacity=".8"/><circle cx="136" cy="136" r="4" fill="#9DC0EA" stroke="none" fill-opacity=".7"/></g></svg>
+  <div class="eyebrow a" style="--d:.05">New frontiers</div>
+  <h2 class="a" style="--d:.15;color:#fff">Professional growth: building research tools</h2>
+  <div style="display:grid;grid-template-columns:90px 1fr;row-gap:26px;column-gap:24px;margin-top:52px;align-items:center">
+    <svg class="a" style="--d:.35" width="70" height="70" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="14" rx="22" ry="8" fill="none" stroke="#FBD27A" stroke-width="5"/><path d="M10 14v36c0 4.4 9.8 8 22 8s22-3.6 22-8V14M10 32c0 4.4 9.8 8 22 8s22-3.6 22-8" fill="none" stroke="#FBD27A" stroke-width="5"/></svg>
+    <div class="a hot glass" style="--d:.45;font-size:36px" data-tip="<b>The research database:</b> PrivCo, Crunchbase, Capital IQ, Form D and Form ADV linked in PostgreSQL, every decision recorded with keys; 130,054 investments by 4,480 venture firms, 2005–2025.">A national venture research database</div>
+    <svg class="a" style="--d:.6" width="70" height="70" viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="10" width="52" height="40" rx="5" fill="none" stroke="#FBD27A" stroke-width="5"/><path d="M14 40l10-12 8 8 12-16" fill="none" stroke="#9DC0EA" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><line x1="22" y1="58" x2="42" y2="58" stroke="#FBD27A" stroke-width="5" stroke-linecap="round"/></svg>
+    <div class="a hot glass" style="--d:.7;font-size:36px" data-tip="<b>Venture Atlas:</b> an interactive dashboard over the same data, with an animated executive preview in which every chart drills down to the area, flow, firm or estimate behind it.">Venture Atlas: interactive research dashboard</div>
+  </div>
+  <div class="a rule" style="--d:.9;margin-top:54px"></div>
+  <div class="a" style="--d:1.0;margin-top:40px;font-size:30px;color:#C9D6E6">Thanks to Charles Dhanaraj and Peter Demerjian for their advisement.</div>
+  <div class="a" style="--d:1.2;margin-top:22px;font-size:46px;font-weight:700;color:#FBD27A">Thank you · Questions</div>
+  <div class="num">10</div>
+  <aside class="notes">
+    <b>About 1½ minutes, then 15 minutes of discussion.</b><br>
+    Professional growth: the dissertation turned practice skills into research infrastructure.<br>
+    • A national venture research database: five providers linked in PostgreSQL, every decision recorded with keys.<br>
+    • Venture Atlas: an interactive dashboard over the same data, with drill-down from any chart to the area, flow, firm or estimate behind it. Offer to show it during discussion.<br>
+    <i>[Your words: how this connects to your role and where it takes you.]</i><br>
+    Limitations, if asked: associations, not causal effects; office presence is measured two ways (deal activity, Form ADV filings) and some dynamics depend on the choice.<br>
+    Thanks: Charles Dhanaraj and Peter Demerjian for their advisement.
+  </aside>
+</section>
+
+<div id="tip"></div>
+<script>
+(function(){
+  if (window.matchMedia && window.matchMedia("print").matches) return;
+  var S=[].slice.call(document.querySelectorAll(".slide")), i=0, tip=document.getElementById("tip");
+  try{ var h=parseInt(location.hash.slice(1),10); if(h>0&&h<=S.length) i=h-1; }catch(e){}
+  function fit(){ var k=Math.min(innerWidth/1280, innerHeight/720);
+    S.forEach(function(s){ s.style.transform="translate(-50%,-50%) scale("+k+")"; }); }
+  // numbers count up to their printed value when their slide appears (never under ?print or while printing)
+  var still=/print/.test(location.search)||(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var C=[].slice.call(document.querySelectorAll(".count")); C.forEach(function(el){ el.setAttribute("data-full",el.textContent); });
+  function settle(){ C.forEach(function(el){ cancelAnimationFrame(el._raf); el.textContent=el.getAttribute("data-full"); }); }
+  function countUp(el){
+    var full=el.getAttribute("data-full"), m=full.match(/^([^\d]*)([\d,]+(?:\.\d+)?)(.*)$/); if(!m) return;
+    var target=parseFloat(m[2].replace(/,/g,"")), dec=(m[2].split(".")[1]||"").length, comma=m[2].indexOf(",")>=0;
+    var delay=(parseFloat(getComputedStyle(el).getPropertyValue("--d"))||0)*1000, dur=1200, t0=null;
+    function fmt(v){ var s=v.toFixed(dec); if(comma) s=s.replace(/\B(?=(\d{3})+(?!\d))/g,","); return m[1]+s+m[3]; }
+    el.textContent=fmt(0);
+    function step(now){ if(t0===null) t0=now; var p=Math.min(1,Math.max(0,(now-t0-delay)/dur)), e=1-Math.pow(1-p,3);
+      if(p>=1){ el.textContent=full; return; } el.textContent=fmt(target*e); el._raf=requestAnimationFrame(step); }
+    el._raf=requestAnimationFrame(step); }
+  addEventListener("beforeprint",function(){ still=true; settle(); });
+  function show(n){ i=Math.max(0,Math.min(S.length-1,n)); tip.classList.remove("on"); settle();
+    if(!still) [].forEach.call(S[i].querySelectorAll(".count"),countUp);
+    S.forEach(function(s,j){ s.classList.toggle("on",j===i); var a=s.querySelector(".notes"); if(a) a.classList.toggle("on",j===i); });
+    history.replaceState(null,"","#"+(i+1)); }
+  addEventListener("keydown",function(e){
+    if(["ArrowRight","ArrowDown","PageDown"," "].indexOf(e.key)>=0){show(i+1);e.preventDefault();}
+    else if(["ArrowLeft","ArrowUp","PageUp"].indexOf(e.key)>=0){show(i-1);e.preventDefault();}
+    else if(e.key==="n"||e.key==="N"){document.body.classList.toggle("shownotes");}
+    else if(e.key==="Home"){show(0);} else if(e.key==="End"){show(S.length-1);} });
+  // click moves on, except on a detail target (those show their detail on hover)
+  addEventListener("click",function(e){ if(e.target.closest(".hot")||e.target.closest(".notes")) return; show(e.clientX>innerWidth/2?i+1:i-1); });
+  // detail on hover: the paper's figures behind each number, row or bar (for questions; not slide text)
+  addEventListener("mousemove",function(e){
+    var t=e.target.closest("[data-tip]");
+    if(!t||!t.closest(".slide.on")){ tip.classList.remove("on"); return; }
+    if(tip._for!==t){ tip.innerHTML=t.getAttribute("data-tip"); tip._for=t; } tip.classList.add("on");
+    var w=tip.offsetWidth,h=tip.offsetHeight,x=e.clientX+18,y=e.clientY+18;
+    if(x+w>innerWidth-10) x=e.clientX-w-18; if(y+h>innerHeight-10) y=e.clientY-h-18;
+    tip.style.left=x+"px"; tip.style.top=y+"px"; });
+  addEventListener("resize",fit); fit(); show(i);
+})();
+</script>
+</body>
+</html>
