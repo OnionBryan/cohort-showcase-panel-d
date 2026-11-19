@@ -64,7 +64,7 @@ h2{font-size:46px;line-height:1.12;margin:10px 0 30px;font-weight:700;letter-spa
 .rule{height:1px;background:linear-gradient(90deg,rgba(255,255,255,.28),rgba(255,255,255,0))}
 svg text{font-family:var(--head)}
 .hot{cursor:help}
-.notes{display:none}
+.notes,#notes{display:none}
 .live{display:none}
 /* entry animations: each .a rises in after the slide appears, in order of --d */
 @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
@@ -78,7 +78,10 @@ svg text{font-family:var(--head)}
 @keyframes drift{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 @media screen{
   body{height:100vh;overflow:hidden;background:radial-gradient(1200px 800px at 50% 40%,#12233a 0%,#07101d 70%)}
-  .slide{position:absolute;left:50%;top:50%;transform-origin:center center;display:none;box-shadow:0 40px 90px rgba(0,0,0,.55)}
+  /* the slide sits inside a margin of this dark stage in a window, and edge to edge on black in full screen (see fit() below) */
+  body.full{background:#000}
+  .slide{position:absolute;left:50%;top:50%;transform-origin:center center;display:none;box-shadow:0 40px 90px rgba(0,0,0,.55);outline:1px solid rgba(255,255,255,.14)}
+  body.full .slide{box-shadow:none;outline:0}
   .slide.on{display:block;animation:slidein .45s ease both}
   .slide.on::after{transform-origin:left;animation:growx .9s var(--ease) both}
   .slide.on .a{animation:rise .6s var(--ease) both;animation-delay:calc(var(--d,0)*1s)}
@@ -91,10 +94,11 @@ svg text{font-family:var(--head)}
   .slide.on .live{display:inline;animation:fadein .8s ease both;animation-delay:calc(var(--d,2)*1s)}
   .slide.on .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 2.2s ease-out infinite;animation-delay:calc(var(--d,2)*1s);opacity:0}
   .slide.on .rings g{transform-box:fill-box;transform-origin:center;animation:drift 90s linear infinite}
-  body.shownotes .notes.on{display:block;position:fixed;left:0;right:0;bottom:0;max-height:36vh;overflow:auto;background:rgba(255,251,233,.96);color:#222;
-    font:17px/1.5 var(--head);padding:14px 26px;z-index:9;border-top:3px solid var(--amber);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-  #tip{position:fixed;z-index:20;pointer-events:none;max-width:460px;background:rgba(12,32,54,.86);color:#fff;border-radius:14px;padding:14px 18px;
-    font:20px/1.4 var(--head);border:1px solid rgba(255,255,255,.16);box-shadow:0 18px 40px rgba(0,0,0,.4);
+  /* speaker notes (key N): a panel under the slide, which is then fitted to the area above it; --u is the window's scale against 1280x720 */
+  body.shownotes #notes{display:block;position:fixed;left:0;right:0;bottom:0;height:30vh;overflow:auto;background:#FFFBE9;color:#222;
+    font:17px/1.5 var(--head);font-size:max(14px,calc(14px*var(--u,1)));padding:.8em 1.5em;z-index:9;border-top:3px solid var(--amber)}
+  #tip{position:fixed;z-index:20;pointer-events:none;max-width:23em;max-height:calc(100vh - 20px);overflow:hidden;background:rgba(12,32,54,.86);color:#fff;border-radius:.7em;padding:.7em .9em;
+    font:20px/1.4 var(--head);font-size:max(14px,calc(20px*var(--u,1)));border:1px solid rgba(255,255,255,.16);box-shadow:0 18px 40px rgba(0,0,0,.4);
     backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);opacity:0;visibility:hidden;transition:opacity .16s ease}
   #tip.on{opacity:1;visibility:visible}
   #tip b{color:#FBD27A}
@@ -109,7 +113,7 @@ svg text{font-family:var(--head)}
   @page{size:1280px 720px;margin:0}
   html,body{background:#fff}
   .slide{page-break-after:always;break-after:page;transform:none !important;position:relative !important;left:auto !important;top:auto !important;display:block !important}
-  #tip{display:none}
+  #tip,#notes{display:none !important}
 }
 </style>
 </head>
@@ -399,13 +403,30 @@ svg text{font-family:var(--head)}
 </section>
 
 <div id="tip"></div>
+<div id="notes"></div>
 <script>
 (function(){
   if (window.matchMedia && window.matchMedia("print").matches) return;
-  var S=[].slice.call(document.querySelectorAll(".slide")), i=0, tip=document.getElementById("tip");
+  var S=[].slice.call(document.querySelectorAll(".slide")), i=0, tip=document.getElementById("tip"), pad=document.getElementById("notes"), root=document.documentElement, U=1;
   try{ var h=parseInt(location.hash.slice(1),10); if(h>0&&h<=S.length) i=h-1; }catch(e){}
-  function fit(){ var k=Math.min(innerWidth/1280, innerHeight/720);
-    S.forEach(function(s){ s.style.transform="translate(-50%,-50%) scale("+k+")"; }); }
+  // Framing. Full screen (key F, or a browser window that covers the whole screen) shows the slide edge to edge on black.
+  // In an ordinary window the slide keeps a margin of the dark stage on every side, so its four edges are always in view.
+  // With the notes open (key N) the slide is fitted to the area above them. The hover box and the notes scale with the window.
+  function fsEl(){ return document.fullscreenElement||document.webkitFullscreenElement||null; }
+  function covers(){ var ow=window.outerWidth||0, oh=window.outerHeight||0;
+    return ow>=screen.width-1 && oh>=screen.height-1 && Math.abs(innerHeight/innerWidth-oh/ow)<0.012; }
+  function fit(){
+    var W=innerWidth, H=innerHeight; if(!W||!H) return;
+    var notes=document.body.classList.contains("shownotes"), full=!!fsEl()||covers();
+    var top=notes?Math.round(H*0.7):H, m=full?0:Math.max(12,Math.round(Math.min(W,top)*0.03));
+    var k=Math.max(0.05,Math.min((W-2*m)/1280,(top-2*m)/720));
+    U=Math.min(W/1280,H/720); root.style.setProperty("--u",U.toFixed(4));
+    document.body.classList.toggle("full",full&&!notes);
+    S.forEach(function(s){ s.style.top=(top/2)+"px"; s.style.transform="translate(-50%,-50%) scale("+k+")"; }); }
+  var rf=0; function refit(){ fit(); cancelAnimationFrame(rf); rf=requestAnimationFrame(fit); }
+  function toggleFull(){ var d=document;
+    try{ if(fsEl()){ (d.exitFullscreen||d.webkitExitFullscreen).call(d); }
+      else { var q=root.requestFullscreen||root.webkitRequestFullscreen; if(q){ var p=q.call(root); if(p&&p.catch) p.catch(function(){}); } } }catch(e){} }
   // numbers count up to their printed value when their slide appears (never under ?print or while printing)
   var still=/print/.test(location.search)||(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches);
   var C=[].slice.call(document.querySelectorAll(".count")); C.forEach(function(el){ el.setAttribute("data-full",el.textContent); });
@@ -422,24 +443,36 @@ svg text{font-family:var(--head)}
   addEventListener("beforeprint",function(){ still=true; settle(); });
   function show(n){ i=Math.max(0,Math.min(S.length-1,n)); tip.classList.remove("on"); settle();
     if(!still) [].forEach.call(S[i].querySelectorAll(".count"),countUp);
-    S.forEach(function(s,j){ s.classList.toggle("on",j===i); var a=s.querySelector(".notes"); if(a) a.classList.toggle("on",j===i); });
-    history.replaceState(null,"","#"+(i+1)); }
+    S.forEach(function(s,j){ s.classList.toggle("on",j===i); });
+    var a=S[i].querySelector(".notes"); pad.innerHTML=a?a.innerHTML:""; pad.scrollTop=0;
+    try{ history.replaceState(null,"","#"+(i+1)); }catch(e){} }
   addEventListener("keydown",function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey) return;
     if(["ArrowRight","ArrowDown","PageDown"," "].indexOf(e.key)>=0){show(i+1);e.preventDefault();}
     else if(["ArrowLeft","ArrowUp","PageUp"].indexOf(e.key)>=0){show(i-1);e.preventDefault();}
-    else if(e.key==="n"||e.key==="N"){document.body.classList.toggle("shownotes");}
+    else if(e.key==="n"||e.key==="N"){document.body.classList.toggle("shownotes");refit();}
+    else if(e.key==="f"||e.key==="F"){toggleFull();}
     else if(e.key==="Home"){show(0);} else if(e.key==="End"){show(S.length-1);} });
   // click moves on, except on a detail target (those show their detail on hover)
-  addEventListener("click",function(e){ if(e.target.closest(".hot")||e.target.closest(".notes")) return; show(e.clientX>innerWidth/2?i+1:i-1); });
-  // detail on hover: the paper's figures behind each number, row or bar (for questions; not slide text)
+  addEventListener("click",function(e){ if(e.target.closest(".hot")||e.target.closest("#notes")) return; show(e.clientX>innerWidth/2?i+1:i-1); });
+  // detail on hover: the paper's figures behind each number, row or bar (for questions; not slide text); kept inside the window
   addEventListener("mousemove",function(e){
     var t=e.target.closest("[data-tip]");
     if(!t||!t.closest(".slide.on")){ tip.classList.remove("on"); return; }
     if(tip._for!==t){ tip.innerHTML=t.getAttribute("data-tip"); tip._for=t; } tip.classList.add("on");
-    var w=tip.offsetWidth,h=tip.offsetHeight,x=e.clientX+18,y=e.clientY+18;
-    if(x+w>innerWidth-10) x=e.clientX-w-18; if(y+h>innerHeight-10) y=e.clientY-h-18;
+    var w=tip.offsetWidth,h=tip.offsetHeight,g=Math.round(18*U),x=e.clientX+g,y=e.clientY+g;
+    if(x+w>innerWidth-10) x=e.clientX-w-g; if(y+h>innerHeight-10) y=e.clientY-h-g;
+    x=Math.max(10,Math.min(x,innerWidth-w-10)); y=Math.max(10,Math.min(y,innerHeight-h-10));
     tip.style.left=x+"px"; tip.style.top=y+"px"; });
-  addEventListener("resize",fit); fit(); show(i);
+  // refit whenever the window, the screen mode or the page's visible area changes
+  addEventListener("resize",refit); addEventListener("pageshow",refit); addEventListener("orientationchange",refit);
+  ["fullscreenchange","webkitfullscreenchange"].forEach(function(ev){ document.addEventListener(ev,function(){ refit(); [120,450,1100].forEach(function(t){ setTimeout(fit,t); }); }); });
+  if(window.visualViewport) visualViewport.addEventListener("resize",refit);
+  if(window.ResizeObserver) new ResizeObserver(refit).observe(root);
+  // a stray trackpad pinch would magnify the page and crop the slide: ignore it
+  addEventListener("wheel",function(e){ if(e.ctrlKey) e.preventDefault(); },{passive:false});
+  ["gesturestart","gesturechange","gestureend"].forEach(function(ev){ addEventListener(ev,function(e){ e.preventDefault(); }); });
+  fit(); show(i);
 })();
 </script>
 </body>
